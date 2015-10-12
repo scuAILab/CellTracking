@@ -1,4 +1,4 @@
-function [boundingBoxes, segmentResult] = segmentCell(im)
+function [bounding_boxes, segmentResult] = segmentCell(im)
 
     I = rgb2gray(im);
 
@@ -36,13 +36,8 @@ function [boundingBoxes, segmentResult] = segmentCell(im)
     % figure, imshow(BWnobord), title('cleared border image');
 
     %% 显示分割区域
-    figure, imshow(I), title('original image');
-    boundingBoxes = regionprops(BWdfill, 'BoundingBox');
-    for i=1:numel(boundingBoxes)
-        rect = boundingBoxes(i).BoundingBox;
-        rectangle('Position', [rect(1), rect(2), rect(3), rect(4)],...
-                'LineWidth',1, 'edgecolor', 'r');
-    end
+%     figure, imshow(I), title('original image');
+    regi
     [L, num] = bwlabel(BWdfill);
     for i=1:num
         [r c] = find(L==i);  %第一个区域
