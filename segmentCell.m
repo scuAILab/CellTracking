@@ -1,6 +1,7 @@
+function [ segmentResult ] = segmentCell(images)
 close all;
 
-filename = 'E:\zy\Ò½ÁÆ´óÊý¾Ý\¹ãÖÝÖÐ¿ÆÔºÊý¾Ý\mitosis\osk-8000-B-new_t182c1.TIF';
+filename = 'E:\zy\Ò½ï¿½Æ´ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½Ôºï¿½ï¿½ï¿½\mitosis\osk-8000-B-new_t182c1.TIF';
 
 I = imread(filename);
 I = rgb2gray(I);
@@ -12,17 +13,17 @@ text(size(I,2),size(I,1)+25, ....
     'Johns Hopkins University', ...
     'FontSize',7,'HorizontalAlignment','right');
 
-%% Step 2: Detect Entire Cell  ¼ì²âÏ¸°û
+%% Step 2: Detect Entire Cell  ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½
 % Two cells are present in this image, but only one cell can be seen in its entirety. We will detect this cell. Another word for object detection is segmentation. The object to be segmented differs greatly in contrast from the background image. Changes in contrast can be detected by operators that calculate the gradient of an image. The gradient image can be calculated and a threshold can be applied to create a binary mask containing the segmented cell. First, we use edge and the Sobel operator to calculate the threshold value. We then tune the threshold value and use edge again to obtain a binary mask that contains the segmented cell.
 [~, threshold] = edge(I, 'sobel');
 % fudgeFactor = .5;
-%-----------------ÊÖ¹¤ÉèÖÃ1.8
+%-----------------ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½1.8
 % fudgeFactor = 1.8;
 fudgeFactor = 2;
 BWs = edge(I,'sobel', threshold * fudgeFactor);
 figure, imshow(BWs), title('binary gradient mask');
 
-%% Step 3: Dilate the Image ÅòÕÍ
+%% Step 3: Dilate the Image ï¿½ï¿½ï¿½ï¿½
 % The binary gradient mask shows lines of high contrast in the image. These lines do not quite delineate the outline of the object of interest. Compared to the original image, you can see gaps in the lines surrounding the object in the gradient mask. These linear gaps will disappear if the Sobel image is dilated using linear structuring elements, which we can create with the strel function.
 % se90 = strel('line', 3, 90);
 % se0 = strel('line', 3, 0);
@@ -36,21 +37,21 @@ BWsdil = imdilate(BWsdil, [se90 se0]);
 figure, imshow(double(BWsdil).*double(I)), title('dilated gradient mask');
 imdil = double(BWsdil).*double(I);
 
-%% Step 4: Fill Interior Gaps Ìî²¹
+%% Step 4: Fill Interior Gaps ï¿½î²¹
 BWdfill = imfill(BWsdil, 'holes');
 figure, imshow(BWdfill);
 title('binary image with filled holes');
 
-%% Step 5: Remove Connected Objects on Border ÒÆ³ý´¦ÔÚ±ß½çÉÏµÄ¶ÔÏó
+%% Step 5: Remove Connected Objects on Border ï¿½Æ³ï¿½ï¿½Ú±ß½ï¿½ï¿½ÏµÄ¶ï¿½ï¿½ï¿½
 BWnobord = BWdfill;
 % BWnobord = imclearborder(BWdfill, 4);
 % figure, imshow(BWnobord), title('cleared border image');
 
-%% ÏÔÊ¾·Ö¸îÇøÓò
+%% ï¿½ï¿½Ê¾ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½
 figure, imshow(I), title('original image');
 [L, num] = bwlabel(BWdfill);
 for i=1:num
-    [r c] = find(L==i);  %µÚÒ»¸öÇøÓò
+    [r c] = find(L==i);  %ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     rectWidth = max(c) - min(c);
     rectHeight = max(r) - min(r);
     if rectWidth>10 && rectHeight>10
@@ -62,7 +63,7 @@ for i=1:num
     end
 end
 
-%% Step 6: Smoothen the Object Æ½»¬Ä¿±ê
+%% Step 6: Smoothen the Object Æ½ï¿½ï¿½Ä¿ï¿½ï¿½
 % seD = strel('diamond',1);
 % BWfinal = imerode(BWnobord,seD);
 % BWfinal = imerode(BWfinal,seD);
@@ -75,3 +76,6 @@ end
 % figure, imshow(Segout), title('outlined original image');
 
 %% 
+
+segmentResult = null;
+end
