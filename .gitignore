@@ -2,7 +2,8 @@
 /temp
 /test
 /result
-.mat
-.jpg
-.png
-.m~
+*.mat
+*.jpg
+*.png
+*.m~
+*.asv
