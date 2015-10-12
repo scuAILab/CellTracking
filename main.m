@@ -55,12 +55,12 @@ end
 
 %% 3. cell detection
 disp('3. Cell detection')
-segmentResult = segmentCell(images(:,:,:,opt.tracking.startID));
+[segmentResult, boundingBoxes ] = segmentCell(images(:,:,:,opt.tracking.startID));
 
 
 %% 4. cell tracking
 disp('4. Cell tracking')
-trackResult = trackCell(images,segmentResult,opt.tracking );
+trackResult = trackCell(images,segmentResult, boundingBoxes, opt.tracking );
 
 
 %% 5. show lineage in trees
