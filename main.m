@@ -11,6 +11,7 @@ addpath(fullfile('trackers',tracker));
 dataPath = './data/c1';
 maskPath = './data/c2';
 
+
 if exist('images','var')==0
     if exist('data/images.mat','file') == 0 
         images = getImages(dataPath,false); 
@@ -19,6 +20,16 @@ if exist('images','var')==0
         load('data/images.mat');
     end
 end
+
+
+arch = computer('arch') ;
+switch arch
+    case 'glnxa64', dataPath = ''; 
+    case 'maci64', opts.imageLibrary = 'quartz' ;
+    case 'win64', opts.imageLibrary = 'gdiplus' ;
+end
+
+
 
 % 135 ~ 181
 startID = 181;    % 15/16 85/86  134/135  181/182     299   % 255-startID+1
