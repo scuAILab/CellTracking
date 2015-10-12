@@ -39,7 +39,11 @@ switch arch
         c1c2Path = '';
 end
 
+<<<<<<< HEAD
 % check workspace Only check 'images'
+=======
+
+>>>>>>> origin/master
 if exist('images','var')==0
     if exist('data/images.mat','file') == 0 
         images = loadData(dataPath,c2Path,c1c2Path,opt.crop,DEBUG);
@@ -48,6 +52,23 @@ if exist('images','var')==0
         load('data/images.mat');
     end
 end
+<<<<<<< HEAD
+=======
+
+
+arch = computer('arch') ;
+switch arch
+    case 'glnxa64', dataPath = ''; 
+    case 'maci64', opts.imageLibrary = 'quartz' ;
+    case 'win64', opts.imageLibrary = 'gdiplus' ;
+end
+
+
+
+% 135 ~ 181
+startID = 181;    % 15/16 85/86  134/135  181/182     299   % 255-startID+1
+endID   = 135; 
+>>>>>>> origin/master
                 
 %% 2. blob tracking
 % disp('2. Blob tracking.')
