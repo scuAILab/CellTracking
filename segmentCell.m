@@ -41,7 +41,7 @@ function [segmentResult, boundingBoxes] = segmentCell(im)
     % figure, imshow(BWnobord), title('cleared border image');
 
     %% œ‘ æ∑÷∏Ó«¯”Ú
-    figure, imshow(I), title('original image');
+%     figure, imshow(I), title('original image');
     boundingBoxes = regionprops(BWdfill, 'BoundingBox');
 %     boundingBoxesFiltered = struct;
     count = 1;
