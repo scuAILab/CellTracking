@@ -1,5 +1,10 @@
-function [boundingBoxes, segmentResult] = segmentCell(im)
-
+function [segmentResult, boundingBoxes] = segmentCell(im)
+    minWidth = 15;
+    maxWidth = 70;
+    minHeight = 15;
+    maxHeight = 70;
+    showBoxFlag = false;
+    
     I = rgb2gray(im);
     %% Detect Entire Cell 
     % Two cells are present in this image, but only one cell can be seen in its entirety. We will detect this cell. Another word for object detection is segmentation. The object to be segmented differs greatly in contrast from the background image. Changes in contrast can be detected by operators that calculate the gradient of an image. The gradient image can be calculated and a threshold can be applied to create a binary mask containing the segmented cell. First, we use edge and the Sobel operator to calculate the threshold value. We then tune the threshold value and use edge again to obtain a binary mask that contains the segmented cell.
@@ -38,14 +43,27 @@ function [boundingBoxes, segmentResult] = segmentCell(im)
     %% ÏÔÊ¾·Ö¸îÇøÓò
     figure, imshow(I), title('original image');
     boundingBoxes = regionprops(BWdfill, 'BoundingBox');
+%     boundingBoxesFiltered = struct;
+    count = 1;
     for i=1:numel(boundingBoxes)
         rect = boundingBoxes(i).BoundingBox;
-        rectangle('Position', [rect(1), rect(2), rect(3), rect(4)],...
-                'LineWidth',1, 'edgecolor', 'r');
+%         rectangle('Position', [rect(1), rect(2), rect(3), rect(4)],...
+%                 'LineWidth',1, 'edgecolor', 'r');
+            
+        if rect(3)>minWidth && rect(4)>minHeight
+            if rect(3)<maxWidth && rect(4)<maxHeight
+                if showBoxFlag
+                    rectangle('Position', [rect(1), rect(2), rect(3), rect(4)],...
+                        'LineWidth',1, 'edgecolor', 'g');
+                end
+                boundingBoxesFiltered(count) = struct('BoundingBox', rect);
+                count = count + 1;
+            end
+        end
     end
     
     %% Filter to boundingBoxes
-
+    boundingBoxes = boundingBoxesFiltered;
     [L, num] = bwlabel(BWdfill);
     segmentResult = L;
 end
