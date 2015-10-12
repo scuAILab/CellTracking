@@ -6,27 +6,27 @@ addpath util
 addpath data
 addpath temp
 tracker = 'CT';
-addpath(fullfile('trackers',tracker));
 
 DEBUG = true;
 
 %****** opt *******%
 %   opt.crop
-opt.crop.imageDim = 512;
-opt.crop.startX = 0;        % crop started point:  x-axis
-opt.crop.startY = 0;
+opt.crop.imageWidth  = 817;
+opt.crop.imageHeight = 610;
+opt.crop.startX = 3268;                 % crop started point:  x-axis
+opt.crop.startY = 1220;
 opt.crop.debug  = DEBUG;
 %   opt.segment
 
 %   opt.tracking
 opt.tracking.startID = 181; % 15/16 85/86  134/135  181/182   total: 299
 opt.tracking.endID   = 135; 
-
+opt.tracking.tracker = tracker;
 %  choose different arch
 arch = computer('arch');
 switch arch
     case 'glnxa64', 
-        dataPath = '/media/jamin/Data/Cell/tracking/test'; 
+        dataPath = '/media/jamin/Data/Cell/c1'; 
         c2Path   = '';
         c1c2Path = '';
     case 'win64',
@@ -55,7 +55,7 @@ end
 
 %% 3. cell detection
 disp('3. Cell detection')
-segmentResult = segmentCell(images);
+segmentResult = segmentCell(images(:,:,:,opt.tracking.startID));
 
 
 %% 4. cell tracking

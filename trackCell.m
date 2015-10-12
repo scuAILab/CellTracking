@@ -1,8 +1,17 @@
 function [ result ] = trackCell( images,segmentResult,tracking )
-%TRACKCELL Summary of this function goes here
-%   Detailed explanation goes here
+%TRACKCELL  tracking different cells 
+%
+%
+%
+
+
+% init parameters
 startID = tracking.startID;
 endID   = tracking.endID;
+tracker = tracking.tracker;
+addpath(fullfile('trackers',tracker));
+% cellMask = segmentResult.cellMask;
+status = segmentResult.status;
 
 imageNum = size(images,4);
 h1 = figure(1);
@@ -10,7 +19,7 @@ title('first frame');
 im = images(:,:,:,startID);
 figure(1);
 imshow(im,[]);
-% ------------- continue from method 3.2  -----------------
+% ------------- continue from method 3.2  ------
 %   random choose tracking numbers
 trackNum  = 6;
 seeds = randi([1,cellNum],6,1);

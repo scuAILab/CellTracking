@@ -6,7 +6,8 @@ function [output,c] = getImages(inputpath,crop,DEBUG)
 
 t = tic();
 %%  init 
-imageDim = crop.imageDim;
+imageDimHeight = crop.imageHeight;
+imageDimWidth = crop.imageWidth;
 startX = crop.startX;        % crop started point:  x-axis
 startY = crop.startY;        %                      y-axis
 
@@ -24,23 +25,23 @@ for i = 1:n
         if j == 1             % just for modify
             c{j} = filePath(i).name;
             im = imread( fullfile(inputpath,char(c{j})) );
-            imH = size(im,1);
-            imW = size(im,2);
+            imW = size(im,2);        %width
+            imH = size(im,1);        %height
             chanels = size(im,3);
             if DEBUG 
-                output = zeros(imageDim,imageDim,chanels,fileNum,'uint8');
+                output = zeros(imageDimHeight,imageDimWidth,chanels,fileNum,'uint8');
             else
                 output = zeros(imH     ,imW     ,chanels,fileNum,'uint8');
             end
-            assert(startX+imageDim<imW+1,'started point and crop size exceed the width  range!');
-            assert(startY+imageDim<imH+1,'started point and crop size exceed the height range!');
+            assert(startX+imageDimWidth  < imW+1,'started point and crop size exceed the width  range!');
+            assert(startY+imageDimHeight < imH+1,'started point and crop size exceed the height range!');
         end
         
         c{j} = filePath(i).name;
         im = imread( fullfile(inputpath,char(c{j})) );
         
-        if DEBUG % crop 
-            output(:,:,:,j) = im(startY+1:startY+imageDim, startX+1:startX+imageDim,:);          
+        if DEBUG % crop
+            output(:,:,:,j) = im(startY+1:startY+imageDimHeight, startX+1:startX+imageDimWidth,:);          
         else  % not crop            
             output(:,:,:,j) = im;
         end
