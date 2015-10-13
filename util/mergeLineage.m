@@ -17,7 +17,8 @@ function [ mergeLineageResult ] = mergeLineage( points,clr )
 layerNums  = length(points{1}.x);
 cellNums   = length(clr);                   
 subCells   = 1:cellNums;                    % set of subSet to merge
-fatherCell    = {};                          % list of fatherCell
+fatherCells= {};          % order by [fatherCell,sonCell,sonCell,sonCell..]
+mitosis = {};             % order by [fatherCell,sonCell,sonCell]
 newCellIdx = cellNums+1;                      % index next newCell's index
 % aboves variants will changed in following code.
 
@@ -36,35 +37,41 @@ for  l = 1:layerNums
 %                 fprintf('i:%d,j:%d,L:%d\n',i,j,length(subCells));  % test
                 center1 = [points{subCells(i)}.x(l),points{subCells(i)}.y(l)];
                 center2 = [points{subCells(j)}.x(l),points{subCells(j)}.y(l)];            
-                if pdist2(center1,center2,'euclidean') < 4
+                if pdist2(center1,center2,'euclidean') < 10
                     % Insert newCellIdx to subCells
                     subCells = union( subCells, newCellIdx );
                     fprintf('%d,%d, merge to %d at layer %d\n',subCells(i),subCells(j),newCellIdx,l);   
                     % Memory the case of mergence                
                     fatherCells = insertCellFather(fatherCells,newCellIdx,subCells(i),subCells(j)) ;                 
-                    
+                    mitosis{newCellIdx-cellNums} = [newCellIdx,subCells(i),subCells(j)];
                     % Update newCell's whole path
-                    for ll = l:layerNums
-                        points{newCellIdx}.x(ll) = mean([points{subCells(i)}.x(ll),points{subCells(j)}.x(ll)]);
-                        points{newCellIdx}.y(ll) = mean([points{subCells(i)}.y(ll),points{subCells(j)}.y(ll)]);
-                        points{newCellIdx}.z(ll) = ll;
-                        
-%                         % Using the newCell's centre instead of sonCell's.
-%                         % But it can only in 2-layers, not effect in a tree                      
-%                         points{subCells(i)}.x(ll) = points{newCellIdx}.x(ll);
-%                         points{subCells(j)}.x(ll) = points{newCellIdx}.x(ll);
-%                         points{subCells(i)}.x(ll) = points{newCellIdx}.y(ll);
-%                         points{subCells(j)}.x(ll) = points{newCellIdx}.y(ll);
+                    for ll = 1:layerNums
+                        if ll < l
+                            points{newCellIdx}.x(ll) = points{subCells(i)}.x(ll);
+                            points{newCellIdx}.y(ll) = points{subCells(i)}.y(ll);
+                            points{newCellIdx}.z(ll) = ll;
+                        else                        
+                            points{newCellIdx}.x(ll) = mean([points{subCells(i)}.x(ll),points{subCells(j)}.x(ll)]);
+                            points{newCellIdx}.y(ll) = mean([points{subCells(i)}.y(ll),points{subCells(j)}.y(ll)]);
+                            points{newCellIdx}.z(ll) = ll;
 
-                        
-                        % set to 0  then the subCells(sonCells) are all set
-                        % to 0.
-                        points{subCells(i)}.x(ll) = 0;
-                        points{subCells(j)}.x(ll) = 0;
-                        points{subCells(i)}.y(ll) = 0;
-                        points{subCells(j)}.y(ll) = 0;
-                        points{subCells(i)}.z(ll) = 0;
-                        points{subCells(j)}.z(ll) = 0;
+                            % Using the newCell's centre instead of sonCell's.
+                            % But it can only in 2-layers, not effect in a tree                      
+                            points{subCells(i)}.x(ll) = points{newCellIdx}.x(ll);
+                            points{subCells(j)}.x(ll) = points{newCellIdx}.x(ll);
+                            points{subCells(i)}.y(ll) = points{newCellIdx}.y(ll);
+                            points{subCells(j)}.y(ll) = points{newCellIdx}.y(ll);
+                            points{subCells(i)}.z(ll) = ll;
+                            points{subCells(j)}.z(ll) = ll;
+
+    %                         % set to 0  then the subCells(sonCells) are all set to 0.
+    %                         points{subCells(i)}.x(ll) = 0;
+    %                         points{subCells(j)}.x(ll) = 0;
+    %                         points{subCells(i)}.y(ll) = 0;
+    %                         points{subCells(j)}.y(ll) = 0;
+    %                         points{subCells(i)}.z(ll) = 0;
+    %                         points{subCells(j)}.z(ll) = 0;
+                        end
 
                     end
                     
@@ -82,7 +89,10 @@ end
 
 % redraw a merged lineage 
 
-mergeLineageResult = null;
+mergeLineageResult.fatherCells = fatherCells;
+mergeLineageResult.points = points;
+mergeLineageResult.mitosis = mitosis;
+
 end
 
 
@@ -95,9 +105,12 @@ function [fatherCells] = insertCellFather( fatherCells, newCellIdx, subCell1, su
     isInsert = false;
     n = length(fatherCells);
     for i = 1:n
-        if ismember(fatherCells{i},newCellIdx) 
+        % How about the fatherCell=[father,son1,son2] insert son1's sons?
+        if sum(ismember(fatherCells{i},newCellIdx)+ismember(fatherCells{i},subCell1)...
+                +ismember(fatherCells{i},subCell2) )>0
            isInsert = true;
-           intersect(fatherCells{i},subCell1, subCell2 );
+           fatherCells{i} = union(fatherCells{i},[newCellIdx, subCell1, subCell2]);
+           fatherCells{i} = sort(fatherCells{i},'descend');
         end
     end
     if isInsert == false;
