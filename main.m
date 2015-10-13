@@ -1,7 +1,8 @@
 % tracking phase1 blobs
 %% 1. load data
 disp('1. Load data from path');
-% clear ; clc; close all;
+% clear ; clc; 
+close all;
 addpath util
 addpath data
 addpath temp
@@ -55,16 +56,30 @@ end
 
 %% 3. cell detection
 disp('3. Cell detection')
-[segmentResult, boundingBoxes ] = segmentCell(images(:,:,:,opt.tracking.startID));
-
+[segmentResult, status ] = segmentCell(images(:,:,:,opt.tracking.startID));
+% show segmentResult
+figure;
+subplot(121);
+imshow(images(:,:,:,opt.tracking.startID),[]);
+subplot(122);
+imshow(segmentResult);
+hold on;
+subplot(121);
+for i = 1:length(status)  
+     rectangle('position',status(i).BoundingBox,'edgecolor','r');
+     text(status(i).BoundingBox(1)+5,status(i).BoundingBox(2)+5,sprintf('%d',i),'Color','g','FontSize',7);    
+end 
 
 %% 4. cell tracking
 disp('4. Cell tracking')
-trackResult = trackCell(images,segmentResult, boundingBoxes, opt.tracking );
+figure;
+trackResult = trackCell(images,segmentResult, status, opt.tracking );
 
 
 %% 5. show lineage in trees
-showLineage(result);
+figure();
+title('lineage tree');
+showLineage(trackResult);
 
 
 

@@ -1,8 +1,7 @@
 function [ ] = showLineage( result )
 %SHOWLINEAGE Summary of this function goes here
 %   Detailed explanation goes here
-figure(3);
-title('lineage tree');
+
 % polt every point
 for cellIdx = 1:length(result)
     clr = rand(1,3);    
