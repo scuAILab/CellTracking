@@ -19,6 +19,9 @@ for cellIdx = 1:length(result)
     plot3(x,y,z,'Color',clr);
     hold on;
     
+    % inverse tracking
+    
+    
 end
 
 end
