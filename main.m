@@ -73,8 +73,13 @@ end
 %% 4. cell tracking
 disp('4. Cell tracking')
 figure;
-trackResult = trackCell(images,segmentResult, status, opt.tracking );
-
+switch arch
+    case 'glnxa64',
+        trackResult = trackBackCell(images,segmentResult, status, opt.tracking );
+    case 'win64'
+        trackResult = trackFeedCell(images,segmentResult, status, opt.tracking );
+end
+    
 
 %% 5. show lineage in trees
 figure();
