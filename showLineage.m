@@ -1,10 +1,11 @@
-function [ ] = showLineage( result )
+function [ mergeLineageResult  ] = showLineage( result )
 %SHOWLINEAGE Summary of this function goes here
 %   Detailed explanation goes here
 
 % polt every point
 for cellIdx = 1:length(result)
-    clr = rand(1,3);    
+    
+    clr{cellIdx} = rand(1,3);    
     temp = result{cellIdx};
     frameNum = size(temp,1);
     % calc center point of cellIdx
@@ -16,13 +17,27 @@ for cellIdx = 1:length(result)
     z = 1:frameNum;
     
     % plot lineage tree
-    plot3(x,y,z,'Color',clr);
+    plot3(x,y,z,'Color',clr{cellIdx});
     hold on;
     
     % inverse tracking
+    point{cellIdx}.x = x;          % [x,y,z]
+    point{cellIdx}.y = y';
+    point{cellIdx}.z = z;
+    
     
     
 end
+
+    % inverse tracking 
+    mergeLineageResult = mergeLineage(point,clr);
+    
+    % redraw the lineage by mergeLineage.
+    %   1. 
+    %
+    
+    % added the mitosis to the lineage trees.
+
 
 end
 
