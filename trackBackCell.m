@@ -1,4 +1,4 @@
-function [ result ] = trackBackCell( images,segmentResult, boundingBoxes,tracking )
+function [ result ] = trackBackCell( images, segmentResult, boundingBoxes,tracking )
 %TRACKCELL  tracking different cells 
 %
 %
