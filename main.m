@@ -31,7 +31,7 @@ switch arch
         c2Path   = '';
         c1c2Path = '';
     case 'win64',
-        dataPath = 'E:\zy\医疗大数据\广州中科院数据\osk-8000-B-crop5-c1-5-3\'; 
+        dataPath = 'E:\zy\医疗大数据\广州中科院数据\osk-8000-B-new\C1'; 
         c2Path   = '';
         c1c2Path = '';
     case 'maci64',
@@ -79,7 +79,7 @@ switch arch
     case 'win64'
         trackResult = trackFeedCell(images,segmentResult, status, opt.tracking );
 end
-    
+
 
 %% 5. show lineage in trees
 figure();
