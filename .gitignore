@@ -2,8 +2,11 @@
 /temp
 /test
 /result
+/beta
 *.mat
 *.jpg
 *.png
 *.m~
 *.asv
+*.tiff
+*.tif

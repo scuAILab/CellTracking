@@ -12,8 +12,10 @@ DEBUG = true;
 
 %****** opt *******%
 %   opt.crop
-opt.crop.imageWidth  = 817;
-opt.crop.imageHeight = 610;
+opt.crop.imageWidth  = 817;%512;
+opt.crop.imageHeight = 610;%512;
+opt.crop.imageWidth  = 512;
+opt.crop.imageHeight = 512;
 opt.crop.startX = 3268;                 % crop started point:  x-axis
 opt.crop.startY = 1220;
 opt.crop.debug  = DEBUG;
@@ -31,7 +33,7 @@ switch arch
         c2Path   = '';
         c1c2Path = '';
     case 'win64',
-        dataPath = 'E:\zy\医疗大数据\广州中科院数据\osk-8000-B-new\C1'; 
+        dataPath = 'E:\zy\医锟狡达拷锟斤拷锟絓锟斤拷锟斤拷锟叫匡拷院锟斤拷锟絓osk-8000-B-new\C1'; 
         c2Path   = '';
         c1c2Path = '';
     case 'maci64',
@@ -58,17 +60,10 @@ end
 disp('3. Cell detection')
 [segmentResult, status ] = segmentCell(images(:,:,:,opt.tracking.startID));
 % show segmentResult
-figure;
-subplot(121);
-imshow(images(:,:,:,opt.tracking.startID),[]);
-subplot(122);
-imshow(segmentResult);
-hold on;
-subplot(121);
-for i = 1:length(status)  
-     rectangle('position',status(i).BoundingBox,'edgecolor','r');
-     text(status(i).BoundingBox(1)+5,status(i).BoundingBox(2)+5,sprintf('%d',i),'Color','g','FontSize',7);    
-end 
+showSegmentation(status,iamges(:,:,:,opt.tracking.strartID));   
+
+[~, nucleiStatus] = segmentCellNuclei(iamges(:,:,:,opt.tracking.strartID));
+showSegmentation(nucleiStatus,iamges(:,:,:,opt.tracking.strartID));
 
 %% 4. cell tracking
 disp('4. Cell tracking')
