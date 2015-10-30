@@ -1,13 +1,10 @@
 function [ result ] = trackFeedCell(images, segmentResult, status, tracking)
     showCellFlag = true;
 %     showCellFlag = false;
-    % segment one frame
-%     [segmentResult, status ] = segmentCell(images(:,:,:,startID));
-    
+
     % init parameters
     startID = tracking.endID;
     endID   = tracking.startID;
-
     imageNum = size(images,4);
 
     seq.opt.startID = startID;
@@ -96,9 +93,7 @@ function [ result ] = trackFeedCell(images, segmentResult, status, tracking)
                 for i = 1:length(status)  
                      rectangle('position',status(i).BoundingBox,'edgecolor','w');
                      text(status(i).BoundingBox(1)+5,status(i).BoundingBox(2)+5,sprintf('%d',cellId_now(i)),'Color','w','FontSize',10);
-                end
-%                 pause(0.00001); 
-                pause(0.01); 
+                end 
                 hold off;
 
                 segmentResult_Last = segmentResult;

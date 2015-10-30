@@ -2,7 +2,7 @@ function [ result ] = trackBackCell( images, segmentResult, boundingBoxes,tracki
 %TRACKCELL  tracking different cells 
 %
 %
-
+res_path = '/home/jamin/Documents/MATLAB/cell/temp/';
 % init parameters
 startID = tracking.startID;
 endID   = tracking.endID;
@@ -11,9 +11,8 @@ addpath(fullfile('trackers',tracker));
 % cellMask = segmentResult.cellMask;
 status =  boundingBoxes;
 imageNum = size(images,4);
-res_path = '/home/jamin/Documents/MATLAB/cell/temp/';
 cellNum  = length(status);
-trackNum = cellNum;    %6;
+trackNum = cellNum;         %6;
 seq.opt.startID = startID;
 seq.opt.endID = endID;
 seq.opt.imageNum = imageNum;
@@ -24,14 +23,13 @@ for idx = startID:-1:endID
     frmNum = frmNum +1;   
     seq.s_frames{frmNum} = images(:,:,:,idx);
 end
-fprintf('Tracking frome %d to %d, total %d frames.',endID,startID,frmNum);
+fprintf('Tracking frome %d to %d, total %d frames.\n',endID,startID,frmNum);
 
 % tracking each cell 
-for cellIdx = 1:trackNum
+for cellIdx = 3% 1:trackNum
     seq.init_rect = status(cellIdx).BoundingBox;
-%     seq.init_rect(3) = seq.init_rect(3)+10;
-%     seq.init_rect(4) = seq.init_rect(4)+10;          % agument boundingbox 
-    result{cellIdx}= run_CT(seq,res_path,false);
+    seq.opt.cellIdx = cellIdx;
+    result{cellIdx}= eval(strcat('run_',tracker,'(seq,res_path,false)'));
 end
 
 end

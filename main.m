@@ -5,8 +5,9 @@ disp('1. Load data from path');
 close all;
 addpath util
 addpath data
+addpath cellSeg
 addpath temp
-tracker = 'CT';
+tracker = 'CNN';  % DLT,TLD;CNN
 
 DEBUG = true;
 
@@ -23,7 +24,7 @@ opt.crop.debug  = DEBUG;
 
 %   opt.tracking
 opt.tracking.startID = 181; % 15/16 85/86  134/135  181/182   total: 299
-opt.tracking.endID   = 135; 
+opt.tracking.endID   = 136; 
 opt.tracking.tracker = tracker;
 %  choose different arch
 arch = computer('arch');
@@ -58,12 +59,21 @@ end
 
 %% 3. cell detection
 disp('3. Cell detection')
-[segmentResult, status ] = segmentCell(images(:,:,:,opt.tracking.startID));
-% show segmentResult
-showSegmentation(status,iamges(:,:,:,opt.tracking.strartID));   
 
-[~, nucleiStatus] = segmentCellNuclei(iamges(:,:,:,opt.tracking.strartID));
-showSegmentation(nucleiStatus,iamges(:,:,:,opt.tracking.strartID));
+caseID = 4;
+firstFrm = images(:,:,:,opt.tracking.startID);
+switch caseID
+    case 1   % Based on morphology
+        [segmentResult, status ] = segmentCell(firstFrm);          
+    case 2   % Based on morphology
+        [segmentResult, status] = segmentCellNuclei(firstFrm);
+    case 3   % Based on entropy
+        [segmentResult, status] = segmentEntropyCell(firstFrm);
+    case 4   % Based on CNN cell detection
+        [segmentResult, status] = segmentCNNCell(firstFrm);
+end
+showSegmentation(status,firstFrm,segmentResult); 
+
 
 %% 4. cell tracking
 disp('4. Cell tracking')
@@ -72,12 +82,11 @@ switch arch
     case 'glnxa64',
         trackResult = trackBackCell(images,segmentResult, status, opt.tracking );
     case 'win64'
-        trackResult = trackFeedCell(images,segmentResult, status, opt.tracking );
+        trackResult = trackFeedCell(images,segmentResult, status, opt.tracking );    
 end
 
 
 %% 5. show lineage in trees
-figure();
 title('lineage tree');
 showLineage(trackResult);
 

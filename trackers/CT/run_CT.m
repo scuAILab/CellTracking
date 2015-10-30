@@ -1,20 +1,20 @@
 function [ result ] = run_CT( seq,res_path,iSave )
-%RUN_CT Summary of this function goes here
+% RUN_CT Summary of this function goes here
 
 % rand('state',0);
 result = [];
-initstate = seq.init_rect;
-startID = seq.opt.startID;
-endID   = seq.opt.endID;
+initstate= seq.init_rect;
+startID  = seq.opt.startID;
+endID    = seq.opt.endID;
 imageNum = seq.opt.imageNum;
-
+cellIdx  = seq.opt.cellIdx;
 % read first image
 img = seq.s_frames{1};
 img = double(rgb2gray(img));
-
+imgDim = 32;                        % image's Dim
 %----------------------------------------------------------------
-trparams.init_negnumtrain = 50;     %number of trained negative samples
-trparams.init_postrainrad = 4.0;    %radical scope of positive samples
+trparams.init_negnumtrain = 50;     % number of trained negative samples
+trparams.init_postrainrad = 4.0;    % radical scope of positive samples
 trparams.initstate = initstate;     % object position [x y width height]
 trparams.srchwinsz = 20;            % size of search window
 % Sometimes, it affects the results.
@@ -28,22 +28,23 @@ clfparams.height= trparams.initstate(4);
 ftrparams.minNumRect = 2;
 ftrparams.maxNumRect = 4;
 %-------------------------
-M = 50;% number of all weaker classifiers, i.e,feature pool
+M = 50;   % number of all weaker classifiers, i.e,feature pool
 %-------------------------
-posx.mu = zeros(M,1);% mean of positive features
+posx.mu = zeros(M,1); % mean of positive features
 negx.mu = zeros(M,1);
-posx.sig= ones(M,1);% variance of positive features
+posx.sig= ones(M,1);  % variance of positive features
 negx.sig= ones(M,1);
 %-------------------------Learning rate parameter
 lRate = 0.85;
 %-------------------------
-%compute feature template
+% compute feature template
 [ftr.px,ftr.py,ftr.pw,ftr.ph,ftr.pwt] = HaarFtr(clfparams,ftrparams,M);
 %-------------------------
-%compute sample templates
+% compute sample templates   enssamble data AND labels
 posx.sampleImage = sampleImg(img,initstate,trparams.init_postrainrad,0,100000);
 negx.sampleImage = sampleImg(img,initstate,1.5*trparams.srchwinsz,4+trparams.init_postrainrad,50);
-%-----------------------------------
+showSampleImages(img,initstate,posx.sampleImage,negx.sampleImage);
+
 %--------Feature extraction
 iH = integral(img);%Compute integral image
 posx.feature = getFtrVal(iH,posx.sampleImage,ftr);
@@ -90,11 +91,14 @@ for i = 2:num
     pause(0.00001); 
     hold off;
     
-    % ------------save pic     
+    % ------------save pic  
     if iSave
         frame = getframe(gcf);
         im_t = frame2im(frame);
-        imwrite(im_t,strcat(res_path,num2str((startID)-i+2),'.jpg'));
+        if ~exist( fullfile(res_path,int2str(cellIdx)), 'dir')
+            mkdir( res_path,int2str(cellIdx));
+        end        
+        imwrite(im_t, fullfile(res_path,int2str(cellIdx), strcat(num2str((startID)-i+2),'.jpg')));
     end    
     
     %------------------------------Extract samples  
@@ -106,10 +110,6 @@ for i = 2:num
     %--------------------------------------------------
     [posx.mu,posx.sig,negx.mu,negx.sig] = classiferUpdate(posx,negx,posx.mu,posx.sig,negx.mu,negx.sig,lRate);% update distribution parameters
 end
-
-
-
-
 
 end
 
