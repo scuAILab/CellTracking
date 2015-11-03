@@ -3,6 +3,7 @@
 /test
 /result
 /beta
+/trackers/CNN/matconvnet/matlab/mex/
 *.mat
 *.jpg
 *.png

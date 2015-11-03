@@ -87,8 +87,8 @@ end
 
 
 %% 5. show lineage in trees
-title('lineage tree');
-showLineage(trackResult);
+% title('lineage tree');
+% showLineage(trackResult);
 
 
 

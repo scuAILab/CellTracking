@@ -29,7 +29,7 @@ fprintf('Tracking frome %d to %d, total %d frames.\n',endID,startID,frmNum);
 for cellIdx = 3% 1:trackNum
     seq.init_rect = status(cellIdx).BoundingBox;
     seq.opt.cellIdx = cellIdx;
-    result{cellIdx}= eval(strcat('run_',tracker,'(seq,res_path,false)'));
+    result{cellIdx}= eval(strcat('run_',tracker,'(seq,res_path,true)'));
 end
 
 end

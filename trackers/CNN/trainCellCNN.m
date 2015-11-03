@@ -7,7 +7,7 @@ opts.useBnorm = false ;
 opts.train.batchSize = 100 ;
 opts.train.numEpochs = 30 ;
 opts.train.continue = true ;
-opts.train.gpus = [] ;
+opts.train.gpus = [1] ;
 opts.train.learningRate = 0.001 ;
 opts.train.expDir = opts.expDir ;
 
@@ -19,9 +19,9 @@ end
 % 
 function [im, labels] = getBatch(imdb, batch)
 % --------------------------------------------------------------------
-im = imdb.images.data(:,:,:,batch) ;
-labels = imdb.images.labels(1,batch) ;
-im = single(im);
+    im = imdb.images.data(:,:,:,batch) ;
+    labels = imdb.images.labels(1,batch) ;
+    im = single(im);
 end
 
 
